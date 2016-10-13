@@ -1,0 +1,2 @@
+(defpackage #:derp
+  (:use #:cl))
