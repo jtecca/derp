@@ -4,4 +4,4 @@
 
 (defpackage #:derp.cmds
   (:use #:cl)
-  (:export ping help other))
+  (:export ping help review other))

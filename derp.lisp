@@ -38,7 +38,7 @@
        :initform (- (get-universal-time) (encode-universal-time 0 0 0 1 1 1970 0))
        :documentation "Latest timestamp.")))
 
-(defvar *available-commands* '("ping" "help"))
+(defvar *available-commands* '("ping" "help" "review"))
 
 (defun prepare-commands (commands)
   "Takes list of commands and returns list of the only available ones."
@@ -92,11 +92,12 @@
   (with-slots (commands) bot
     (let* ((user (car command))
            (cmd (cadr command)))
-      ;(if (member cmd commands :test #'string=)
+      (if (member cmd commands :test #'string=)
           (cond
             ((string= cmd "ping") (derp.cmds:ping bot))
+            ((string= cmd "review") (derp.cmds:review bot user))
             ((string= cmd "help") (derp.cmds:help bot))
-            (t (derp.cmds:other bot))))))
+            (t (derp.cmds:other bot)))))))
 
 (defmethod fetch-messages ((bot derp))
   (cdaddr (fetch-history bot)))
