@@ -54,3 +54,21 @@
                                                                         :color "good")
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
+
+(defun get-cat-xml ()
+  (cxml:parse
+   (dex:get "http://thecatapi.com/api/images/get?format=xml&type=gif")
+   (cxml-dom:make-dom-builder)))
+
+(defun get-cat-url ()
+  (dom:data
+   (dom:first-child
+    (dom:item
+     (dom:get-elements-by-tag-name (dom:document-element (get-cat-xml)) "url") 0))))
+
+(defmethod cat ((bot derp::derp))
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (get-cat-url)
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
