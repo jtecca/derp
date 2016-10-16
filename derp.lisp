@@ -158,3 +158,8 @@
                                            "users.info?token=~A&user=~A"
                                            token
                                            user-id))))
+(defmethod start-derping ((bot derp))
+  (progn
+    (derp::get-commands-and-users derp)
+    (derp::run-tasks derp)
+    (sleep 1)))

@@ -3,6 +3,7 @@
 
 * Installation
 Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with Slack API.
+
 =git clone https://github.com/dptd/jasa=
 
 =git clone https://github.com/dptd/derp=
@@ -10,6 +11,8 @@ Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with Slack API.
 =(ql:quickload :derp)=
 
 * Usage
+To create new derp use =(derp:spawn-derp)= function. This functions takes only one argument: derp-config. You can create config by calling =(derp:make-derp-config)=. Config is used to specify informations like derp displayed name, Slack API token etc.
+
 Example below shows how to spawn a new derp.
 #+BEGIN_SRC lisp
 (setf derp
@@ -22,15 +25,19 @@ Example below shows how to spawn a new derp.
                               :commands '("cat" "ping" "help"))))
 #+END_SRC
 
-And here is just an example how you can start derping...
+And here is how you can make your bot start derping...
 #+BEGIN_SRC lisp
-(progn
-  (derp::get-commands-and-users derp)
-  (derp::run-tasks derp)
-  (sleep 1))
+(derp:start-derping derp)
 #+END_SRC
 
-Not the best way but - hey, it works! At least for now...
+Check on your channel if derp is alive by writing: =@derp ping= Derp should response with =pong=.
+
+* How derp works?
+When derp starts derping it simply does 4 things:
+1. saves new messages from channel which mentions him,
+2. runs all supported commands,
+3. waits a bit,
+4. goes to step 1.
 
 * Supported commands
 
