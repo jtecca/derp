@@ -1,0 +1,42 @@
+#+TITLE: Derp - a simple Slack bot
+#+AUTHOR: dptd
+
+* Installation
+Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with Slack API.
+=git clone https://github.com/dptd/jasa=
+
+=git clone https://github.com/dptd/derp=
+
+=(ql:quickload :derp)=
+
+* Usage
+Example below shows how to spawn a new derp.
+#+BEGIN_SRC lisp
+(setf derp
+      (derp:spawn-derp
+       (derp:make-derp-config :name "derp"
+                              :icon ":robot_face:"
+                              :token "YourSlackAPIToken"
+                              :id "C01234567"
+                              :channel "C01234567"
+                              :commands '("cat" "ping" "help"))))
+#+END_SRC
+
+And here is just an example how you can start derping...
+#+BEGIN_SRC lisp
+(progn
+  (derp::get-commands-and-users derp)
+  (derp::run-tasks derp)
+  (sleep 1))
+#+END_SRC
+
+Not the best way but - hey, it works! At least for now...
+
+* Supported commands
+
+| command | description                                 |
+|---------+---------------------------------------------|
+| cat     | displays random cat gif                     |
+| help    | displays available commands and description |
+| ping    | displays "pong" when alive                  |
+| review  | picks two random people from the channel    |
