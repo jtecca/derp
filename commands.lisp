@@ -27,10 +27,8 @@
                           :icon_emoji (slot-value bot 'derp::icon)))
 
 (defmethod fetch-users ((bot derp::derp))
-  (jasa.core:send-and-get-answer (format nil
-                                         "channels.info?token=~A&channel=~A"
-                                         (slot-value bot 'derp::token)
-                                         (slot-value bot 'derp::channel))))
+  (jasa.channels:info :token (slot-value bot 'derp::token)
+                      :channel (slot-value bot 'derp::channel)))
 
 (defmethod get-users ((bot derp::derp))
   (cdr (delete (slot-value bot 'derp::id) (assoc :members (cdadr (fetch-users bot))) :test #'string=)))

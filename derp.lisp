@@ -71,19 +71,14 @@
 
 (defmethod fetch-history ((bot derp))
   (with-slots (channel token ts) bot
-    (jasa.core:send-and-get-answer (format nil
-                     "channels.history?token=~A&channel=~A&oldest=~A"
-                     token
-                     channel
-                     ts))))
+    (jasa.channels:history :token token
+                           :channel channel
+                           :oldest ts)))
 
 (defmethod fetch-users ((bot derp))
   (with-slots (channel token) bot
-    (jasa.core:send-and-get-answer (format nil
-                     "channels.info?token=~A&channel=~A"
-                     *slack-url*
-                     token
-                     channel))))
+    (jasa.channels:info :token token
+                        :channel channel)))
 
 (defmethod run-tasks ((bot derp))
   "Running all tasks from the queue."
@@ -154,12 +149,12 @@
 
 (defmethod fetch-user-info ((bot derp) user-id)
   (with-slots (token) bot
-    (jasa.core:send-and-get-answer (format nil
-                                           "users.info?token=~A&user=~A"
-                                           token
-                                           user-id))))
+    (jasa.users:info :token token
+                     :user user-id)))
+
 (defmethod start-derping ((bot derp))
-  (progn
-    (derp::get-commands-and-users derp)
-    (derp::run-tasks derp)
-    (sleep 1)))
+  (loop
+     (progn
+       (derp::get-commands-and-users bot)
+       (derp::run-tasks bot)
+       (sleep 1))))
