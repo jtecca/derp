@@ -75,11 +75,6 @@
                            :channel channel
                            :oldest ts)))
 
-(defmethod fetch-users ((bot derp))
-  (with-slots (channel token) bot
-    (jasa.channels:info :token token
-                        :channel channel)))
-
 (defmethod run-tasks ((bot derp))
   "Running all tasks from the queue."
   (with-accessors ((tasks tasks)) bot
@@ -113,14 +108,11 @@
   (with-slots (id) bot
     (search (format nil "<@~A>" id) (cdr (assoc :text msg)))))
 
-(defmethod get-name-from-id ((bot derp) id)
-  (cdr (assoc :name (cdadr (fetch-user-info bot id)))))
-
 (defmethod get-name ((bot derp) id)
-  (with-slots (users) bot
+  (with-slots (token users) bot
     (let ((name (assoc id users :test #'string=)))
       (if name (cdr name)
-            (let ((new-name (get-name-from-id bot id)))
+            (let ((new-name (jasa.utils:get-user-name-from-id :token token :user-id id)))
               (if new-name
                   (progn
                     (push (cons id new-name) users)
@@ -129,6 +121,7 @@
 (defmethod convert-msg-to-command ((bot derp) msg)
   (let ((command (cl-ppcre:split "\\s+" (extract-text msg)))
         (userid (cdr (assoc :user msg))))
+    (print userid)
     (cons
      (get-name bot userid)
      (cdr command))))
@@ -146,11 +139,6 @@
 
 (defun direct-message (username text)
   (format nil "<@~A> ~A" username text))
-
-(defmethod fetch-user-info ((bot derp) user-id)
-  (with-slots (token) bot
-    (jasa.users:info :token token
-                     :user user-id)))
 
 (defmethod start-derping ((bot derp))
   (loop
