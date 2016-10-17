@@ -64,9 +64,26 @@
     (dom:item
      (dom:get-elements-by-tag-name (dom:document-element (get-cat-xml)) "url") 0))))
 
-(defmethod cat ((bot derp::derp))
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                          :channel (slot-value bot 'derp::channel)
-                          :text (get-cat-url)
-                          :username (slot-value bot 'derp::name)
-                          :icon_emoji (slot-value bot 'derp::icon)))
+;; (defmethod cat ((bot derp::derp))
+;;   (jasa.chat:post-message :token (slot-value bot 'derp::token)
+;;                           :channel (slot-value bot 'derp::channel)
+;;                           :text (get-cat-url)
+;;                           :username (slot-value bot 'derp::name)
+;;                           :icon_emoji (slot-value bot 'derp::icon)))
+
+(defmethod get-user-id ((bot derp::derp) user)
+  (car (rassoc user (slot-value bot 'derp::users) :test #'string=)))
+
+(defmethod get-im-channel ((bot derp::derp) user)
+  (let ((user-id (car (rassoc user (slot-value bot 'derp::users) :test #'string=)))
+        (ims (cdadr (jasa.im:list-im :token (slot-value bot 'derp::token)))))
+    (car (delete nil (mapcar #'(lambda (x) (if (string= (cdr (assoc :user x)) user-id) (cdr (assoc :id x)) nil)) ims)))))
+
+(defmethod cat ((bot derp::derp) user)
+  (let ((token (slot-value bot 'derp::token)))
+    (jasa.im:open-im :token token :user (get-user-id bot user))
+    (jasa.chat:post-message :token token
+                            :channel (get-im-channel bot user)
+                            :text (get-cat-url)
+                            :username (slot-value bot 'derp::name)
+                            :icon_emoji (slot-value bot 'derp::icon))))
