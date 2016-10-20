@@ -87,3 +87,18 @@
                             :text (get-cat-url)
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
+
+
+(defun get-dog-json ()
+  (cl-json:decode-json-from-string
+   (dex:get (format nil "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=funny+dogs"))))
+
+(defun get-dog-url ()
+  (cdr (assoc :image--original--url (cdar (get-dog-json)) :test #'string=)))
+
+(defmethod dog ((bot derp::derp))
+  (let ((token (slot-value bot 'derp::token))
+        (channel (slot-value bot 'derp::channel)))
+    (jasa.chat:post-message :token token
+                            :channel channel
+                            :text (get-dog-url))))

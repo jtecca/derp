@@ -39,6 +39,7 @@
        :documentation "Latest timestamp.")))
 
 (defvar *available-commands* '("cat"
+                               "dog"
                                "help"
                                "ping"
                                "review"))
@@ -88,6 +89,7 @@
       (if (member cmd commands :test #'string=)
           (cond
             ((string= cmd "cat") (derp.cmds:cat bot user))
+            ((string= cmd "dog") (derp.cmds:dog bot user))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "review") (derp.cmds:review bot user))
