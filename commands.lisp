@@ -102,3 +102,7 @@
     (jasa.chat:post-message :token token
                             :channel channel
                             :text (get-dog-url))))
+
+(defmethod remove ((bot derp::derp))
+  "Removes last derp message."
+  ())

@@ -42,7 +42,8 @@
                                "dog"
                                "help"
                                "ping"
-                               "review"))
+                               "review"
+                               "remove"))
 
 (defun prepare-commands (commands)
   "Takes list of commands and returns list of the only available ones."
@@ -93,6 +94,7 @@
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "review") (derp.cmds:review bot user))
+            ((string= cmd "remove") (derp.cmds:remove bot user))
             (t (derp.cmds:other bot)))))))
 
 (defmethod fetch-messages ((bot derp))
