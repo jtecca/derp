@@ -47,3 +47,4 @@ When derp starts derping it simply does 4 things:
 | help    | displays available commands and description |
 | ping    | displays "pong" when alive                  |
 | review  | picks two random people from the channel    |
+| joke    | displays random Chuck Norris joke           |

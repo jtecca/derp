@@ -103,6 +103,18 @@
                             :channel channel
                             :text (get-dog-url))))
 
-(defmethod remove ((bot derp::derp))
+(defmethod remove-last-message ((bot derp::derp))
   "Removes last derp message."
   ())
+
+(defun fetch-chuck-joke ()
+  (cl-json:decode-json-from-string
+   (dex:get (format nil "http://api.icndb.com/jokes/random"))))
+
+(defun get-joke-text ()
+  (cdr (assoc :joke (cdr (car (cdr (fetch-chuck-joke)))))))
+
+(defmethod joke ((bot derp::derp))
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (format nil "\"~A\"" (get-joke-text))))
