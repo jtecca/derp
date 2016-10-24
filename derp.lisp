@@ -94,7 +94,7 @@
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "review") (derp.cmds:review bot user))
-            ((string= cmd "remove") (derp.cmds:remove bot user))
+            ((string= cmd "remove") (derp.cmds:remove-last-message bot user))
             (t (derp.cmds:other bot)))))))
 
 (defmethod fetch-messages ((bot derp))
