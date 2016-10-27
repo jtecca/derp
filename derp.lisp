@@ -41,6 +41,7 @@
 (defvar *available-commands* '("cat"
                                "dog"
                                "help"
+                               "joke"
                                "ping"
                                "remove"
                                "review"))
@@ -92,6 +93,7 @@
             ((string= cmd "cat") (derp.cmds:cat bot))
             ((string= cmd "dog") (derp.cmds:dog bot))
             ((string= cmd "help") (derp.cmds:help bot))
+            ((string= cmd "joke") (derp.cmds:joke bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot user))

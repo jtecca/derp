@@ -132,7 +132,9 @@
 (defmethod joke ((bot derp::derp))
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
-                          :text (format nil "\"~A\"" (get-joke-text))))
+                          :text (format nil "\"~A\"" (get-joke-text))
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
 
 ;;;; queues
 
