@@ -42,8 +42,8 @@
                                "dog"
                                "help"
                                "ping"
-                               "review"
-                               "remove"))
+                               "remove"
+                               "review"))
 
 (defun prepare-commands (commands)
   "Takes list of commands and returns list of the only available ones."
@@ -89,12 +89,12 @@
            (cmd (cadr command)))
       (if (member cmd commands :test #'string=)
           (cond
-            ((string= cmd "cat") (derp.cmds:cat bot user))
-            ((string= cmd "dog") (derp.cmds:dog bot user))
+            ((string= cmd "cat") (derp.cmds:cat bot))
+            ((string= cmd "dog") (derp.cmds:dog bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
+            ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot user))
-            ((string= cmd "remove") (derp.cmds:remove-last-message bot user))
             (t (derp.cmds:other bot)))))))
 
 (defmethod fetch-messages ((bot derp))
@@ -125,7 +125,6 @@
 (defmethod convert-msg-to-command ((bot derp) msg)
   (let ((command (cl-ppcre:split "\\s+" (extract-text msg)))
         (userid (cdr (assoc :user msg))))
-    (print userid)
     (cons
      (get-name bot userid)
      (cdr command))))
