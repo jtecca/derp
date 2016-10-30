@@ -43,6 +43,7 @@
                                "help"
                                "joke"
                                "ping"
+                               "random"
                                "remove"
                                "review"))
 
@@ -95,6 +96,7 @@
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
+            ((string= cmd "random") (derp.cmds:rand-user bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot user))
             (t (derp.cmds:other bot)))))))

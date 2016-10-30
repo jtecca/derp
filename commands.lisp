@@ -2,6 +2,7 @@
 
 (setf *random-state* (make-random-state t))
 
+;;;; ping
 (defmethod ping ((bot derp::derp))
   "Mostly used to check if derp is working."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
@@ -9,7 +10,7 @@
                           :text "pong"
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
-
+;;;; help
 (defmethod help ((bot derp::derp))
   "Displays known commands with description."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
@@ -18,6 +19,7 @@
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
+;;;; unknown command
 (defmethod other ((bot derp::derp))
   "Informs that given command is not supported."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
@@ -38,6 +40,16 @@
          (winner (random (length users))))
     (derp::get-name bot (nth winner users))))
 
+;;;; randuser
+(defmethod rand-user ((bot derp::derp))
+  "Picks random user from the channel."
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (format nil "And the winner is... *~A*! :tada:" (random-user bot))
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
+
+;;;; review
 (defmethod review ((bot derp::derp) user) ;; todo, check if there are at least 2 people in the channel
   "Picks two, random people from the channel."
   (let ((first-person (random-user bot))
@@ -74,6 +86,7 @@
      (dom:get-elements-by-tag-name (dom:document-element (get-cat-xml)) "url") 0))))
 
 (defmethod cat ((bot derp::derp))
+  "Posts random cat gif."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
                           :text (get-cat-url)
@@ -98,6 +111,7 @@
   (cdr (assoc :image--original--url (cdar (get-dog-json)) :test #'string=)))
 
 (defmethod dog ((bot derp::derp))
+  "Posts random dog gif."
   (let ((token (slot-value bot 'derp::token))
         (channel (slot-value bot 'derp::channel)))
     (jasa.chat:post-message :token token
@@ -130,6 +144,7 @@
   (cdr (assoc :joke (cdr (car (cdr (fetch-chuck-joke)))))))
 
 (defmethod joke ((bot derp::derp))
+  "Posts random Chuck Norris joke."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
                           :text (format nil "\"~A\"" (get-joke-text))

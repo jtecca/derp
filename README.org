@@ -2,7 +2,7 @@
 #+AUTHOR: dptd
 
 * Installation
-Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with Slack API.
+Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with the Slack API.
 
 =git clone https://github.com/dptd/jasa=
 
@@ -32,19 +32,15 @@ And here is how you can make your bot start derping...
 
 Check on your channel if derp is alive by writing: =@derp ping= Derp should response with =pong=.
 
-* How derp works?
-When derp starts derping it simply does 4 things:
-1. saves new messages from channel which mentions him,
-2. runs all supported commands,
-3. waits a bit,
-4. goes to step 1.
-
 * Supported commands
 
-| command | description                                 |
-|---------+---------------------------------------------|
-| cat     | displays random cat gif                     |
-| help    | displays available commands and description |
-| ping    | displays "pong" when alive                  |
-| review  | picks two random people from the channel    |
-| joke    | displays random Chuck Norris joke           |
+| command | description                                      |
+|---------+--------------------------------------------------|
+| cat     | displays random cat gif                          |
+| dog     | displays random dog gif                          |
+| +help   | displays available commands and the description+ |
+| joke    | displays random Chuck Norris joke                |
+| random  | picks one random person from the channel         |
+| ping    | displays "pong" when alive                       |
+| remove  | removes last derp's message                      |
+| review  | picks two random people from the channel         |
