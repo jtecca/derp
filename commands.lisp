@@ -64,6 +64,7 @@
                                                                         :color "good")
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
+
 ;;;; direct channels
 (defmethod get-user-id ((bot derp::derp) user)
   (car (rassoc user (slot-value bot 'derp::users) :test #'string=)))
@@ -151,6 +152,11 @@
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
-;;;; queues
-
-;;;; requests
+;;;; yes-no
+(defmethod yesno ((bot derp::derp))
+  "Posts random yes, no or maybe gif."
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (cdr (assoc :image (cl-json:decode-json-from-string (dex:get "https://yesno.wtf/api/"))))
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
