@@ -17,6 +17,10 @@
              :accessor commands
              :initform (error "Derp needs to know some commands.")
              :documentation "Set of available commands.")
+   (queues :initarg :queues
+           :accessor queues
+           :initform nil
+           :documentation "Stored queues.")
    (tasks :initarg :tasks
           :accessor tasks
           :initform nil
@@ -45,7 +49,8 @@
                                "ping"
                                "random"
                                "remove"
-                               "review"))
+                               "review"
+                               "yesno"))
 
 (defun prepare-commands (commands)
   "Takes list of commands and returns list of the only available ones."
@@ -58,7 +63,8 @@
   (id nil :type string)
   (channel nil :type string)
   (commands nil :type list)
-  (tasks nil :type list))
+  (tasks nil :type list)
+  (queues nil :type list))
 
 (defun spawn-derp (config)
   "Creates one derp."
@@ -70,7 +76,8 @@
                      :commands (prepare-commands (derp-config-commands config))
                      :name (derp-config-name config)
                      :icon (derp-config-icon config)
-                     :tasks (derp-config-tasks config))
+                     :tasks (derp-config-tasks config)
+                     :queues (derp-config-queues config))
       (error "spawn-derp requires derp-config as parameter")))
 
 (defmethod fetch-history ((bot derp))
@@ -98,7 +105,8 @@
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "random") (derp.cmds:rand-user bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
-            ((string= cmd "review") (derp.cmds:review bot user))
+            ((string= cmd "review") (derp.cmds:review bot (caddr command)))
+            ((string= cmd "yes?") (derp.cmds:review bot))
             (t (derp.cmds:other bot)))))))
 
 (defmethod fetch-messages ((bot derp))

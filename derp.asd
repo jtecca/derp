@@ -6,5 +6,6 @@
   :serial t
   :components ((:file "package")
                (:file "derp")
-               (:file "commands")))
+               (:file "commands")
+               (:file "queues")))
 
