@@ -58,9 +58,8 @@
        do (setf second-person (random-user bot)))
     (jasa.chat:post-message :token (slot-value bot 'derp::token)
                             :channel (slot-value bot 'derp::channel)
-                            :attachments (jasa.chat:prepare-attachments :fallback ""
-                                                                        :title "I'm so sorry..."
-                                                                        :text (format nil "<@~A> and <@~A>" first-person second-person)
+                            :text "*I'm so sorry...*"
+                            :attachments (jasa.chat:prepare-attachments :text (format nil "<@~A> and <@~A>" first-person second-person)
                                                                         :color "good")
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
