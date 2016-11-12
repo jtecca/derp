@@ -66,6 +66,10 @@
   (tasks nil :type list)
   (queues nil :type list))
 
+(defun load-queues (list) ;; probably from the file, for now create empty
+  (if list
+      (cons (list (car list) ''nil) (load-queues (cdr list)))))
+
 (defun spawn-derp (config)
   "Creates one derp."
   (if (derp-config-p config)
@@ -77,7 +81,7 @@
                      :name (derp-config-name config)
                      :icon (derp-config-icon config)
                      :tasks (derp-config-tasks config)
-                     :queues (derp-config-queues config))
+                     :queues (load-queues (derp-config-queues config)))
       (error "spawn-derp requires derp-config as parameter")))
 
 (defmethod fetch-history ((bot derp))
