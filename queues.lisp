@@ -11,7 +11,7 @@
                           :attachments (jasa.chat:prepare-attachments :fallback ""
                                                                       :text (available-queues (slot-value bot 'derp::queues))
                                                                       :mrkdwn_in '("text")
-                                                                      :color "good")
+                                                                      :color "#6984c9")
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
@@ -48,6 +48,20 @@
                               :text "Status of all queues:"
                               :attachments (jasa.chat:prepare-attachments
                                             :text (queues-status bot (slot-value bot 'derp::queues))
-                                            :mrkdwn_in '("text"))
+                                            :mrkdwn_in '("text")
+                                            :color "#6984c9")
                               :username (slot-value bot 'derp::name)
                               :icon_emoji (slot-value bot 'derp::icon)))
+
+(defmethod add-queue ((bot derp::derp) queue)
+  (let ((msg nil))
+    (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
+        (setf msg "This queue already exists.")
+        (progn
+          (push (cons queue ''nil) (slot-value bot 'derp::queues))
+          (setf msg (format nil "Queue *~A* added." queue))))
+    (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                            :channel (slot-value bot 'derp::channel)
+                            :text msg
+                            :username (slot-value bot 'derp::name)
+                            :icon_emoji (slot-value bot 'derp::icon))))

@@ -159,3 +159,11 @@
                           :text (cdr (assoc :image (cl-json:decode-json-from-string (dex:get "https://yesno.wtf/api/"))))
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
+;;;; random-number
+(defmethod random-number ((bot derp::derp) max)
+  "Returns random number."
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (format nil ":game_die: ~A :game_die:" (random (parse-integer max)))
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))

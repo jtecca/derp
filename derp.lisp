@@ -42,15 +42,19 @@
        :initform (- (get-universal-time) (encode-universal-time 0 0 0 1 1 1970 0))
        :documentation "Latest timestamp.")))
 
-(defvar *available-commands* '("cat"
+(defvar *available-commands* '("add"
+                               "cat"
                                "dog"
                                "help"
                                "joke"
                                "ping"
-                               "random"
+                               "randuser"
+                               "randnumber"
                                "remove"
                                "review"
-                               "yesno"))
+                               "status"
+                               "yes?"
+                               "queues"))
 
 (defun prepare-commands (commands)
   "Takes list of commands and returns list of the only available ones."
@@ -96,22 +100,40 @@
       (mapcar #'(lambda (x) (run-task bot x)) tasks)
       (setf tasks nil)))
 
+(defmethod reject ((bot derp) reason)
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :text (format nil "Command rejected. :disappointed:")
+                          :attachments (jasa.chat:prepare-attachments :title "Reason:"
+                                                                      :text reason
+                                                                      :mrkdwn_in '("text")
+                                                                      :color "#ff0000")
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
+
 (defmethod run-task ((bot derp) command)
   (with-slots (commands) bot
     (let* ((user (car command))
-           (cmd (cadr command)))
+           (cmd (cadr command))
+           (first-argument (caddr command)))
       (if (member cmd commands :test #'string=)
           (cond
+            ((string= cmd "add") (derp.queues:add-queue bot first-argument))
             ((string= cmd "cat") (derp.cmds:cat bot))
             ((string= cmd "dog") (derp.cmds:dog bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
             ((string= cmd "ping") (derp.cmds:ping bot))
-            ((string= cmd "random") (derp.cmds:rand-user bot))
+            ((string= cmd "randuser") (derp.cmds:rand-user bot))
+            ((string= cmd "randnumber") (ignore-errors (if first-argument
+                                                           (derp.cmds:random-number bot first-argument)
+                                                           (reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))))
+            ((string= cmd "status") (derp.queues:status-all bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
-            ((string= cmd "review") (derp.cmds:review bot (caddr command)))
-            ((string= cmd "yes?") (derp.cmds:review bot))
-            (t (derp.cmds:other bot)))))))
+            ((string= cmd "review") (derp.cmds:review bot first-argument))
+            ((string= cmd "yes?") (derp.cmds:yesno bot))
+            ((string= cmd "queues") (derp.queues:queues bot)))
+          (derp.cmds:other bot)))))
 
 (defmethod fetch-messages ((bot derp))
   (cdaddr (fetch-history bot)))
