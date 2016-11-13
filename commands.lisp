@@ -11,20 +11,12 @@
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 ;;;; help
+;;;; use "fields" here, https://api.slack.com/docs/message-attachments
 (defmethod help ((bot derp::derp))
   "Displays known commands with description."
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
                           :text "Working on it!"
-                          :username (slot-value bot 'derp::name)
-                          :icon_emoji (slot-value bot 'derp::icon)))
-
-;;;; unknown command
-(defmethod other ((bot derp::derp))
-  "Informs that given command is not supported."
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                          :channel (slot-value bot 'derp::channel)
-                          :text "I do not know this command."
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
@@ -50,7 +42,7 @@
                           :icon_emoji (slot-value bot 'derp::icon)))
 
 ;;;; review
-(defmethod review ((bot derp::derp) user) ;; todo, check if there are at least 2 people in the channel
+(defmethod review ((bot derp::derp)) ;; todo, check if there are at least 2 people in the channel
   "Picks two, random people from the channel."
   (let ((first-person (random-user bot))
         (second-person (random-user bot)))

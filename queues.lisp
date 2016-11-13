@@ -11,21 +11,23 @@
                           :attachments (jasa.chat:prepare-attachments :fallback ""
                                                                       :text (available-queues (slot-value bot 'derp::queues))
                                                                       :mrkdwn_in '("text")
-                                                                      :color "#6984c9")
+                                                                      :color "good")
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
 (defmethod queue-exists-p ((bot derp::derp) queue)
-  (if (find queue (slot-value bot 'derp::queues) :test #'string=)
+  (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
       t
-      (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                              :channel (slot-value bot 'derp::channel)
-                              :text (format nil "Queue \"*~A*\" doesn't exist. Use `queues` command to see all available queues." queue)
-                              :username (slot-value bot 'derp::name)
-                              :icon_emoji (slot-value bot 'derp::icon))))
+      (progn
+        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                :channel (slot-value bot 'derp::channel)
+                                :text (format nil "Queue \"*~A*\" doesn't exist. Use `queues` command to see all available queues." queue)
+                                :username (slot-value bot 'derp::name)
+                                :icon_emoji (slot-value bot 'derp::icon))
+        nil)))
 
 (defmethod queue-status ((bot derp::derp) q)
-  (let ((queue (caddr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
+  (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
   (cond ((= 0 (length queue)) (format nil "*[~A]* Queue is empty!" q))
         ((< 1 (length queue)) (format nil "*[~A]* TAIL → ~{*~A* → ~}HEAD" q queue))
         ((format nil "*[~A]* TAIL → *~A* -> HEAD" q (car queue))))))
@@ -49,7 +51,7 @@
                               :attachments (jasa.chat:prepare-attachments
                                             :text (queues-status bot (slot-value bot 'derp::queues))
                                             :mrkdwn_in '("text")
-                                            :color "#6984c9")
+                                            :color "good")
                               :username (slot-value bot 'derp::name)
                               :icon_emoji (slot-value bot 'derp::icon)))
 
@@ -58,10 +60,36 @@
     (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
         (setf msg "This queue already exists.")
         (progn
-          (push (cons queue ''nil) (slot-value bot 'derp::queues))
+          (push (list queue) (slot-value bot 'derp::queues))
           (setf msg (format nil "Queue *~A* added." queue))))
     (jasa.chat:post-message :token (slot-value bot 'derp::token)
                             :channel (slot-value bot 'derp::channel)
                             :text msg
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
+
+(defmethod present-in-the-queue-p ((bot derp::derp) user queue)
+  (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=)) :test #'string=))
+
+(defmethod add-to-the-queue ((bot derp::derp) user queue)
+  (push user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=))))
+
+(defmethod add-if-possible ((bot derp::derp) user queue)
+  (if (queue-exists-p bot queue)
+      (if (not (present-in-the-queue-p bot user queue))
+          (add-to-the-queue bot user queue)
+          (progn
+            (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                    :channel (slot-value bot 'derp::channel)
+                                    :text "I'm afraid you are already in this queue."
+                                    :username (slot-value bot 'derp::name)
+                                    :icon_emoji (slot-value bot 'derp::icon))
+            nil))))
+
+(defmethod lock ((bot derp::derp) user queue)
+  (if (add-if-possible bot user queue)
+      (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                              :channel (slot-value bot 'derp::channel)
+                              :text (queue-status bot queue)
+                              :username (slot-value bot 'derp::name)
+                              :icon_emoji (slot-value bot 'derp::icon))))

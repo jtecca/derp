@@ -4,8 +4,8 @@
 
 (defpackage #:derp.cmds
   (:use #:cl #:jasa.chat #:cxml)
-  (:export cat dog help other ping rand-user random-number review remove-last-message joke yesno))
+  (:export cat dog help ping rand-user random-number review remove-last-message joke yesno))
 
 (defpackage #:derp.queues
   (:use #:cl #:jasa.chat)
-  (:export queues add-queue status-all))
+  (:export add-queue lock queue-status status-all unlock queues))

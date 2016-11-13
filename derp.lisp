@@ -47,12 +47,14 @@
                                "dog"
                                "help"
                                "joke"
+                               "lock"
                                "ping"
                                "randuser"
                                "randnumber"
                                "remove"
                                "review"
                                "status"
+                               "unlock"
                                "yes?"
                                "queues"))
 
@@ -70,10 +72,6 @@
   (tasks nil :type list)
   (queues nil :type list))
 
-(defun load-queues (list) ;; probably from the file, for now create empty
-  (if list
-      (cons (list (car list) ''nil) (load-queues (cdr list)))))
-
 (defun spawn-derp (config)
   "Creates one derp."
   (if (derp-config-p config)
@@ -85,7 +83,7 @@
                      :name (derp-config-name config)
                      :icon (derp-config-icon config)
                      :tasks (derp-config-tasks config)
-                     :queues (load-queues (derp-config-queues config)))
+                     :queues (mapcar #'list (derp-config-queues config)))
       (error "spawn-derp requires derp-config as parameter")))
 
 (defmethod fetch-history ((bot derp))
@@ -103,11 +101,10 @@
 (defmethod reject ((bot derp) reason)
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
-                          :text (format nil "Command rejected. :disappointed:")
-                          :attachments (jasa.chat:prepare-attachments :title "Reason:"
+                          :attachments (jasa.chat:prepare-attachments :title (format nil "Command rejected. :disappointed:")
                                                                       :text reason
                                                                       :mrkdwn_in '("text")
-                                                                      :color "#ff0000")
+                                                                      :color "danger")
                           :username (slot-value bot 'derp::name)
                           :icon_emoji (slot-value bot 'derp::icon)))
 
@@ -118,22 +115,32 @@
            (first-argument (caddr command)))
       (if (member cmd commands :test #'string=)
           (cond
-            ((string= cmd "add") (derp.queues:add-queue bot first-argument))
+            ((string= cmd "add") (if first-argument
+                                     (derp.queues:add-queue bot first-argument)
+                                     (reject bot (format nil "What name do you need? `add <queue_name>`"))))
             ((string= cmd "cat") (derp.cmds:cat bot))
             ((string= cmd "dog") (derp.cmds:dog bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
+            ((string= cmd "lock") (if first-argument
+                                      (derp.queues:lock bot user first-argument)
+                                      (reject bot (format nil "Which queue you want to lock? `lock <queue_name>`"))))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "randuser") (derp.cmds:rand-user bot))
             ((string= cmd "randnumber") (ignore-errors (if first-argument
                                                            (derp.cmds:random-number bot first-argument)
                                                            (reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))))
-            ((string= cmd "status") (derp.queues:status-all bot))
+            ((string= cmd "status") (if first-argument
+                                        (derp.queues:queue-status bot first-argument)
+                                        (derp.queues:status-all bot)))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
-            ((string= cmd "review") (derp.cmds:review bot first-argument))
+            ((string= cmd "review") (derp.cmds:review bot))
+            ((string= cmd "unlock") (if first-argument
+                                        (derp.queues:unlock bot user first-argument)
+                                        (reject bot (format nil "Which queue you want to unlock? `unlock <queue_name>`"))))
             ((string= cmd "yes?") (derp.cmds:yesno bot))
             ((string= cmd "queues") (derp.queues:queues bot)))
-          (derp.cmds:other bot)))))
+          (reject bot (format nil "I do not know this command."))))))
 
 (defmethod fetch-messages ((bot derp))
   (cdaddr (fetch-history bot)))
