@@ -130,9 +130,7 @@
             ((string= cmd "randnumber") (ignore-errors (if first-argument
                                                            (derp.cmds:random-number bot first-argument)
                                                            (reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))))
-            ((string= cmd "status") (if first-argument
-                                        (derp.queues:queue-status bot first-argument)
-                                        (derp.queues:status-all bot)))
+            ((string= cmd "status") (derp.queues:status-all bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot))
             ((string= cmd "unlock") (if first-argument

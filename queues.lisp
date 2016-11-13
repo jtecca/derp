@@ -71,6 +71,7 @@
 (defmethod present-in-the-queue-p ((bot derp::derp) user queue)
   (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=)) :test #'string=))
 
+;;;; adding to the queue
 (defmethod add-to-the-queue ((bot derp::derp) user queue)
   (push user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=))))
 
@@ -93,3 +94,49 @@
                               :text (queue-status bot queue)
                               :username (slot-value bot 'derp::name)
                               :icon_emoji (slot-value bot 'derp::icon))))
+
+
+;;;; removing from the queue
+(defmethod current-user-p ((bot derp::derp) user queue)
+  "Checks if user is in the head of the queue."
+  (string= user (car (reverse (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=))))))
+
+(defmethod remove-from-the-queue ((bot derp::derp) user queue)
+  "Removes user from the queue."
+  (setf
+   (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=))
+   (delete-if #'(lambda (x) (string= user x)) (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=))))
+  t)
+
+(defmethod remove-if-possible ((bot derp::derp) user queue)
+  (if (queue-exists-p bot queue)
+      (if (not (present-in-the-queue-p bot user queue))
+          (progn
+            (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                    :channel (slot-value bot 'derp::channel)
+                                    :text "I'm afraid you are not even in this queue."
+                                    :username (slot-value bot 'derp::name)
+                                    :icon_emoji (slot-value bot 'derp::icon))
+            nil)
+          (remove-from-the-queue bot user queue))))
+
+(defmethod unlock ((bot derp::derp) user queue)
+  (let ((head (current-user-p bot user queue)))
+    (if (remove-if-possible bot user queue)
+        (progn
+          (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                  :channel (slot-value bot 'derp::channel)
+                                  :text (queue-status bot queue)
+                                  :username (slot-value bot 'derp::name)
+                                  :icon_emoji (slot-value bot 'derp::icon))
+          (if head
+              (ping-next-user bot queue))))))
+
+(defmethod ping-next-user ((bot derp::derp) q)
+  (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
+    (if (not (= 0 (length queue)))
+        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                :channel (slot-value bot 'derp::channel)
+                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in queue *[~A]*" q))
+                                :username (slot-value bot 'derp::name)
+                                :icon_emoji (slot-value bot 'derp::icon)))))
