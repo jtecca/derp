@@ -21,6 +21,10 @@
            :accessor queues
            :initform nil
            :documentation "Stored queues.")
+   (requests :initarg :requests
+             :accessor requests
+             :initform nil
+             :documentation "Stored requests.")
    (tasks :initarg :tasks
           :accessor tasks
           :initform nil
@@ -53,6 +57,8 @@
                                "randnumber"
                                "remove"
                                "review"
+                               "request"
+                               "requests"
                                "status"
                                "unlock"
                                "yes?"
@@ -70,7 +76,8 @@
   (channel nil :type string)
   (commands nil :type list)
   (tasks nil :type list)
-  (queues nil :type list))
+  (queues nil :type list)
+  (requests nil :type list))
 
 (defun spawn-derp (config)
   "Creates one derp."
@@ -83,7 +90,8 @@
                      :name (derp-config-name config)
                      :icon (derp-config-icon config)
                      :tasks (derp-config-tasks config)
-                     :queues (mapcar #'list (derp-config-queues config)))
+                     :queues (mapcar #'list (derp-config-queues config))
+                     :requests (derp-config-requests config))
       (error "spawn-derp requires derp-config as parameter")))
 
 (defmethod fetch-history ((bot derp))
@@ -101,8 +109,7 @@
 (defmethod reject ((bot derp) reason)
   (jasa.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
-                          :attachments (jasa.chat:prepare-attachments :title (format nil "Command rejected. :disappointed:")
-                                                                      :text reason
+                          :attachments (jasa.chat:prepare-attachments :text reason
                                                                       :mrkdwn_in '("text")
                                                                       :color "danger")
                           :username (slot-value bot 'derp::name)
@@ -130,6 +137,8 @@
             ((string= cmd "randnumber") (ignore-errors (if first-argument
                                                            (derp.cmds:random-number bot first-argument)
                                                            (reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))))
+            ((string= cmd "request") (derp.requests:request-command bot user (cddr command)))
+            ((string= cmd "requests") (derp.requests:requests bot))
             ((string= cmd "status") (derp.queues:status-all bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot))

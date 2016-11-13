@@ -7,5 +7,6 @@
   :components ((:file "package")
                (:file "derp")
                (:file "commands")
-               (:file "queues")))
+               (:file "queues")
+               (:file "requests")))
 

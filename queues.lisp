@@ -19,11 +19,7 @@
   (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
       t
       (progn
-        (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                                :channel (slot-value bot 'derp::channel)
-                                :text (format nil "Queue \"*~A*\" doesn't exist. Use `queues` command to see all available queues." queue)
-                                :username (slot-value bot 'derp::name)
-                                :icon_emoji (slot-value bot 'derp::icon))
+        (derp:reject bot (format nil "Queue \"*~A*\" doesn't exist. Use `queues` command to see all available queues." queue))
         nil)))
 
 (defmethod queue-status ((bot derp::derp) q)
@@ -80,11 +76,7 @@
       (if (not (present-in-the-queue-p bot user queue))
           (add-to-the-queue bot user queue)
           (progn
-            (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                                    :channel (slot-value bot 'derp::channel)
-                                    :text "I'm afraid you are already in this queue."
-                                    :username (slot-value bot 'derp::name)
-                                    :icon_emoji (slot-value bot 'derp::icon))
+            (derp:reject bot "I'm afraid you are already in this queue.")
             nil))))
 
 (defmethod lock ((bot derp::derp) user queue)
@@ -112,11 +104,7 @@
   (if (queue-exists-p bot queue)
       (if (not (present-in-the-queue-p bot user queue))
           (progn
-            (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                                    :channel (slot-value bot 'derp::channel)
-                                    :text "I'm afraid you are not even in this queue."
-                                    :username (slot-value bot 'derp::name)
-                                    :icon_emoji (slot-value bot 'derp::icon))
+            (derp:reject bot "I'm afraid you are not even in this queue.")
             nil)
           (remove-from-the-queue bot user queue))))
 
@@ -137,6 +125,8 @@
     (if (not (= 0 (length queue)))
         (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
-                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in queue *[~A]*" q))
+                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *[~A]*" q))
                                 :username (slot-value bot 'derp::name)
                                 :icon_emoji (slot-value bot 'derp::icon)))))
+
+;;;; todo, rename queue and remove queue
