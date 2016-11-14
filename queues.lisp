@@ -51,8 +51,11 @@
                               :username (slot-value bot 'derp::name)
                               :icon_emoji (slot-value bot 'derp::icon)))
 
-(defmethod add-queue ((bot derp::derp) queue)
-  (let ((msg nil))
+(defmethod add-queue ((bot derp::derp) args)
+  (let ((queue (car args))
+          (msg nil))
+    (if (not queue)
+        (derp:reject bot (format nil "What name do you need? `add <queue_name>`")))
     (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
         (setf msg "This queue already exists.")
         (progn
@@ -79,13 +82,16 @@
             (derp:reject bot "I'm afraid you are already in this queue.")
             nil))))
 
-(defmethod lock ((bot derp::derp) user queue)
-  (if (add-if-possible bot user queue)
-      (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                              :channel (slot-value bot 'derp::channel)
-                              :text (queue-status bot queue)
-                              :username (slot-value bot 'derp::name)
-                              :icon_emoji (slot-value bot 'derp::icon))))
+(defmethod lock ((bot derp::derp) user args)
+  (let ((queue (car args)))
+    (if (not queue)
+        (derp:reject bot (format nil "Which queue you want to lock? `lock <queue_name>`")))
+    (if (add-if-possible bot user queue)
+        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                :channel (slot-value bot 'derp::channel)
+                                :text (queue-status bot queue)
+                                :username (slot-value bot 'derp::name)
+                                :icon_emoji (slot-value bot 'derp::icon)))))
 
 
 ;;;; removing from the queue
@@ -108,8 +114,11 @@
             nil)
           (remove-from-the-queue bot user queue))))
 
-(defmethod unlock ((bot derp::derp) user queue)
-  (let ((head (current-user-p bot user queue)))
+(defmethod unlock ((bot derp::derp) user args)
+  (let ((queue (car args))
+        (head (current-user-p bot user queue)))
+    (if (not queue)
+        (derp:reject bot (format nil "Which queue you want to unlock? `unlock <queue_name>`")))
     (if (remove-if-possible bot user queue)
         (progn
           (jasa.chat:post-message :token (slot-value bot 'derp::token)
@@ -129,4 +138,31 @@
                                 :username (slot-value bot 'derp::name)
                                 :icon_emoji (slot-value bot 'derp::icon)))))
 
-;;;; todo, rename queue and remove queue
+(defmethod rename ((bot derp::derp) args)
+  "Renames queue. Takes current name and new name."
+  (if (and (car args) (cadr args))
+      (let ((old (car args))
+            (new (cadr args)))
+        (if (rename-possible-p bot old new)
+            (progn
+              (setf (car (assoc old (slot-value bot 'derp::queues) :test #'string=)) new)
+              (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                      :channel (slot-value bot 'derp::channel)
+                                      :text (format nil "Queue *~A* was renamed to *~A*." old new)
+                                      :username (slot-value bot 'derp::name)
+                                      :icon_emoji (slot-value bot 'derp::icon)))))
+      (derp:reject bot (format nil "I need two arguments.~%`rename <old_name> <new_name>`"))))
+
+(defmethod rename-possible-p ((bot derp::derp) old new)
+  (if (assoc old (slot-value bot 'derp::queues) :test #'string=)
+      (if (not (assoc new (slot-value bot 'derp::queues) :test #'string=))
+          t
+          (progn
+            (derp:reject bot (format nil "Queue *~A* already exists.~%`rename <old_name> <new_name>`" new))
+            nil))
+      (progn
+        (derp:reject bot (format nil "Queue *~A* doesn't exists.~%`rename <old_name> <new_name>`" old))
+        nil)))
+
+(defmethod remove-queue ((bot derp::derp) q)
+  ())

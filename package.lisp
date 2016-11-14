@@ -8,7 +8,7 @@
 
 (defpackage #:derp.queues
   (:use #:cl #:jasa.chat)
-  (:export add-queue lock queue-status status-all unlock queues))
+  (:export add-queue lock rename remove-queue queue-status status-all unlock queues))
 
 (defpackage #:derp.requests
   (:use #:cl #:jasa.chat)

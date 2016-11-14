@@ -56,6 +56,7 @@
                                "randuser"
                                "randnumber"
                                "remove"
+                               "rename"
                                "review"
                                "request"
                                "requests"
@@ -119,32 +120,25 @@
   (with-slots (commands) bot
     (let* ((user (car command))
            (cmd (cadr command))
-           (first-argument (caddr command)))
+           (args (cddr command)))
       (if (member cmd commands :test #'string=)
           (cond
-            ((string= cmd "add") (if first-argument
-                                     (derp.queues:add-queue bot first-argument)
-                                     (reject bot (format nil "What name do you need? `add <queue_name>`"))))
+            ((string= cmd "add") (derp.queues:add-queue bot args))
             ((string= cmd "cat") (derp.cmds:cat bot))
             ((string= cmd "dog") (derp.cmds:dog bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
-            ((string= cmd "lock") (if first-argument
-                                      (derp.queues:lock bot user first-argument)
-                                      (reject bot (format nil "Which queue you want to lock? `lock <queue_name>`"))))
+            ((string= cmd "lock") (derp.queues:lock bot user args))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "randuser") (derp.cmds:rand-user bot))
-            ((string= cmd "randnumber") (ignore-errors (if first-argument
-                                                           (derp.cmds:random-number bot first-argument)
-                                                           (reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))))
-            ((string= cmd "request") (derp.requests:request-command bot user (cddr command)))
+            ((string= cmd "randnumber") (ignore-errors (derp.cmds:random-number bot args)))
+            ((string= cmd "rename") (derp.queues:rename bot args))
+            ((string= cmd "request") (derp.requests:request-command bot user args))
             ((string= cmd "requests") (derp.requests:requests bot))
             ((string= cmd "status") (derp.queues:status-all bot))
             ((string= cmd "remove") (derp.cmds:remove-last-message bot))
             ((string= cmd "review") (derp.cmds:review bot))
-            ((string= cmd "unlock") (if first-argument
-                                        (derp.queues:unlock bot user first-argument)
-                                        (reject bot (format nil "Which queue you want to unlock? `unlock <queue_name>`"))))
+            ((string= cmd "unlock") (derp.queues:unlock bot user args))
             ((string= cmd "yes?") (derp.cmds:yesno bot))
             ((string= cmd "queues") (derp.queues:queues bot)))
           (reject bot (format nil "I do not know this command."))))))
