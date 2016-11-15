@@ -4,7 +4,7 @@
 
 (defpackage #:derp.cmds
   (:use #:cl #:jasa.chat #:cxml)
-  (:export cat dog help ping rand-user random-number review remove-last-message joke yesno))
+  (:export cat dog help ping rand-user random-number review remove-last-message joke yesno features))
 
 (defpackage #:derp.queues
   (:use #:cl #:jasa.chat)

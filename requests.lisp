@@ -37,7 +37,7 @@
   (if (and user (car args) (cdr args))
       (progn
         (push (list (car args) (extract-description (cdr args)) user) (slot-value bot 'derp::requests))
-        (save-requests)
+        (save-requests bot)
         (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
                                 :text "Stored, thanks!"

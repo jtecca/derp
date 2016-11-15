@@ -61,6 +61,7 @@
                                "request"
                                "requests"
                                "status"
+                               "features"
                                "unlock"
                                "yes?"
                                "queues"))
@@ -126,6 +127,7 @@
             ((string= cmd "add") (derp.queues:add-queue bot args))
             ((string= cmd "cat") (derp.cmds:cat bot))
             ((string= cmd "dog") (derp.cmds:dog bot))
+            ((string= cmd "features") (derp.cmds:features bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
             ((string= cmd "lock") (derp.queues:lock bot user args))

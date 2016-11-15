@@ -32,7 +32,7 @@
   (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
       t
       (progn
-        (derp:reject bot (format nil "Queue \"*~A*\" doesn't exist. Use `queues` command to see all available queues." queue))
+        (derp:reject bot (format nil "Queue *~A* doesn't exist. Use `queues` command to see all available queues." queue))
         nil)))
 
 (defmethod queue-status ((bot derp::derp) q)
@@ -130,10 +130,10 @@
             nil)
           (progn
             (remove-from-the-queue bot user queue)
-            (save-queues)))))
+            (save-queues bot)))))
 
 (defmethod unlock ((bot derp::derp) user args)
-  (let ((queue (car args))
+  (let* ((queue (car args))
         (head (current-user-p bot user queue)))
     (if (not queue)
         (derp:reject bot (format nil "Which queue you want to unlock? `unlock <queue_name>`")))
@@ -152,7 +152,7 @@
     (if (not (= 0 (length queue)))
         (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
-                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *[~A]*" q))
+                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *~A*" q))
                                 :username (slot-value bot 'derp::name)
                                 :icon_emoji (slot-value bot 'derp::icon)))))
 
@@ -164,7 +164,7 @@
         (if (rename-possible-p bot old new)
             (progn
               (setf (car (assoc old (slot-value bot 'derp::queues) :test #'string=)) new)
-              (save-queues)
+              (save-queues bot)
               (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                       :channel (slot-value bot 'derp::channel)
                                       :text (format nil "Queue *~A* was renamed to *~A*." old new)
