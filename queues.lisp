@@ -1,5 +1,18 @@
 (in-package #:derp.queues)
 
+(defmethod save-queues ((bot derp::derp))
+  (with-open-file (out (format nil "~~/tmp/~A-~A-queues.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+                       :direction :output
+                       :if-exists :supersede)
+    (with-standard-io-syntax
+      (print (slot-value bot 'derp::queues) out))))
+
+(defmethod load-queues ((bot derp::derp))
+  (with-open-file (in (format nil "~~/tmp/~A-~A-queues.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+                      :external-format :utf-8)
+    (with-standard-io-syntax
+      (setf (slot-value bot 'derp::queues) (read in)))))
+
 (defun available-queues (queues)
   (if queues
       (concatenate 'string (format nil "∙ *~A*~%" (caar queues)) (available-queues (cdr queues)))))
@@ -60,6 +73,7 @@
         (setf msg "This queue already exists.")
         (progn
           (push (list queue) (slot-value bot 'derp::queues))
+          (save-queues bot)
           (setf msg (format nil "Queue *~A* added." queue))))
     (jasa.chat:post-message :token (slot-value bot 'derp::token)
                             :channel (slot-value bot 'derp::channel)
@@ -77,7 +91,9 @@
 (defmethod add-if-possible ((bot derp::derp) user queue)
   (if (queue-exists-p bot queue)
       (if (not (present-in-the-queue-p bot user queue))
-          (add-to-the-queue bot user queue)
+          (progn
+            (add-to-the-queue bot user queue)
+            (save-queues bot))
           (progn
             (derp:reject bot "I'm afraid you are already in this queue.")
             nil))))
@@ -112,7 +128,9 @@
           (progn
             (derp:reject bot "I'm afraid you are not even in this queue.")
             nil)
-          (remove-from-the-queue bot user queue))))
+          (progn
+            (remove-from-the-queue bot user queue)
+            (save-queues)))))
 
 (defmethod unlock ((bot derp::derp) user args)
   (let ((queue (car args))
@@ -146,6 +164,7 @@
         (if (rename-possible-p bot old new)
             (progn
               (setf (car (assoc old (slot-value bot 'derp::queues) :test #'string=)) new)
+              (save-queues)
               (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                       :channel (slot-value bot 'derp::channel)
                                       :text (format nil "Queue *~A* was renamed to *~A*." old new)
@@ -163,6 +182,3 @@
       (progn
         (derp:reject bot (format nil "Queue *~A* doesn't exists.~%`rename <old_name> <new_name>`" old))
         nil)))
-
-(defmethod remove-queue ((bot derp::derp) q)
-  ())

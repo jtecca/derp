@@ -1,9 +1,21 @@
 (in-package #:derp.requests)
 
+(defmethod save-requests ((bot derp::derp))
+  (with-open-file (out (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+                       :direction :output
+                       :if-exists :supersede)
+    (with-standard-io-syntax
+      (print (slot-value bot 'derp::requests) out))))
+
+(defmethod load-requests ((bot derp::derp))
+  (with-open-file (in (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+                      :external-format :utf-8)
+    (with-standard-io-syntax
+      (setf (slot-value bot 'derp::requests) (read in)))))
+
 (defmethod get-requests (requests)
   (if requests
       (concatenate 'string (format nil "∙ `~A` - ~A (requested by ~A)~%" (caar requests) (cadar requests) (caddar requests)) (get-requests (cdr requests)))))
-
 
 (defmethod requests ((bot derp::derp))
   (let ((number-of-requests (length (slot-value bot 'derp::requests))))
@@ -25,6 +37,7 @@
   (if (and user (car args) (cdr args))
       (progn
         (push (list (car args) (extract-description (cdr args)) user) (slot-value bot 'derp::requests))
+        (save-requests)
         (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
                                 :text "Stored, thanks!"
