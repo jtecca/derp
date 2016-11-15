@@ -98,9 +98,9 @@
 
 (defmethod fetch-history ((bot derp))
   (with-slots (channel token ts) bot
-    (jasa.channels:history :token token
-                           :channel channel
-                           :oldest ts)))
+    (ignore-errors (jasa.channels:history :token token
+                                          :channel channel
+                                          :oldest ts))))
 
 (defmethod run-tasks ((bot derp))
   "Running all tasks from the queue."
