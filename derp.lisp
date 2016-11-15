@@ -98,9 +98,15 @@
 
 (defmethod fetch-history ((bot derp))
   (with-slots (channel token ts) bot
-    (ignore-errors (jasa.channels:history :token token
-                                          :channel channel
-                                          :oldest ts))))
+    (cond ((char= #\C (char channel 0))
+           (ignore-errors (jasa.channels:history :token token
+                                                 :channel channel
+                                                 :oldest ts)))
+          ((char= #\G (char channel 0))
+           (ignore-errors (jasa.groups:history :token token
+                                               :channel channel
+                                               :oldest ts)))
+          (t (error "Derp channel field is invalid. Should be starting with C or G character.")))))
 
 (defmethod run-tasks ((bot derp))
   "Running all tasks from the queue."
