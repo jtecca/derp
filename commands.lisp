@@ -162,3 +162,18 @@
                             :text (format nil ":game_die: ~A :game_die:" (random (parse-integer max)))
                             :username (slot-value bot 'derp::name)
                             :icon_emoji (slot-value bot 'derp::icon))))
+
+;;;; features
+(defun format-features (features)
+  (if features
+      (concatenate 'string (format nil "∙ `~A`~%" (car features)) (format-features (cdr features)))))
+
+(defmethod features ((bot derp::derp))
+  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                          :channel (slot-value bot 'derp::channel)
+                          :attachments (jasa.chat:prepare-attachments :title "Available features:"
+                                                                      :text (format-features (slot-value bot 'derp::commands))
+                                                                      :mrkdwn_in '("text")
+                                                                      :color "good")
+                          :username (slot-value bot 'derp::name)
+                          :icon_emoji (slot-value bot 'derp::icon)))
