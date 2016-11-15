@@ -68,7 +68,7 @@
   (let ((queue (car args))
           (msg nil))
     (if (not queue)
-        (derp:reject bot (format nil "What name do you need? `add <queue_name>`")))
+        (derp:reject bot (format nil "What name do you need?~%`add <queue_name>`")))
     (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
         (setf msg "This queue already exists.")
         (progn
@@ -101,7 +101,7 @@
 (defmethod lock ((bot derp::derp) user args)
   (let ((queue (car args)))
     (if (not queue)
-        (derp:reject bot (format nil "Which queue you want to lock? `lock <queue_name>`")))
+        (derp:reject bot (format nil "Which queue you want to lock?~%`lock <queue_name>`")))
     (if (add-if-possible bot user queue)
         (jasa.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
@@ -134,18 +134,18 @@
 
 (defmethod unlock ((bot derp::derp) user args)
   (let* ((queue (car args))
-        (head (current-user-p bot user queue)))
-    (if (not queue)
-        (derp:reject bot (format nil "Which queue you want to unlock? `unlock <queue_name>`")))
-    (if (remove-if-possible bot user queue)
-        (progn
-          (jasa.chat:post-message :token (slot-value bot 'derp::token)
-                                  :channel (slot-value bot 'derp::channel)
-                                  :text (queue-status bot queue)
-                                  :username (slot-value bot 'derp::name)
-                                  :icon_emoji (slot-value bot 'derp::icon))
-          (if head
-              (ping-next-user bot queue))))))
+         (head (current-user-p bot user queue)))
+    (if (and user queue)
+        (if (remove-if-possible bot user queue)
+            (progn
+              (jasa.chat:post-message :token (slot-value bot 'derp::token)
+                                      :channel (slot-value bot 'derp::channel)
+                                      :text (queue-status bot queue)
+                                      :username (slot-value bot 'derp::name)
+                                      :icon_emoji (slot-value bot 'derp::icon))
+              (if head
+                  (ping-next-user bot queue))))
+        (derp:reject bot (format nil "Which queue you want to unlock?~%`unlock <queue_name>`")))))
 
 (defmethod ping-next-user ((bot derp::derp) q)
   (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
@@ -182,3 +182,14 @@
       (progn
         (derp:reject bot (format nil "Queue *~A* doesn't exists.~%`rename <old_name> <new_name>`" old))
         nil)))
+
+(defmethod kick ((bot derp::derp) args)
+  (let ((user (car args))
+        (queue (cadr args)))
+    (if user
+        (if queue
+            (if (present-in-the-queue-p bot user queue)
+                  (unlock bot user (list queue))
+                (derp:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
+            (derp:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))
+        (derp:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`")))))

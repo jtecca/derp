@@ -51,6 +51,7 @@
                                "dog"
                                "help"
                                "joke"
+                               "kick"
                                "lock"
                                "ping"
                                "randuser"
@@ -136,6 +137,7 @@
             ((string= cmd "features") (derp.cmds:features bot))
             ((string= cmd "help") (derp.cmds:help bot))
             ((string= cmd "joke") (derp.cmds:joke bot))
+            ((string= cmd "kick") (derp.queues:kick bot args))
             ((string= cmd "lock") (derp.queues:lock bot user args))
             ((string= cmd "ping") (derp.cmds:ping bot))
             ((string= cmd "randuser") (derp.cmds:rand-user bot))
