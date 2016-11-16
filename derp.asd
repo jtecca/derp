@@ -8,5 +8,6 @@
                (:file "derp")
                (:file "commands")
                (:file "queues")
-               (:file "requests")))
+               (:file "requests")
+               (:file "derponarium")))
 

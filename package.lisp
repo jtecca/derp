@@ -13,3 +13,6 @@
 (defpackage #:derp.requests
   (:use #:cl #:jasa.chat)
   (:export requests request-command))
+
+(defpackage #:derponarium
+  (:use #:cl #:derp))
