@@ -15,4 +15,5 @@
   (:export requests request-command))
 
 (defpackage #:derponarium
-  (:use #:cl #:derp))
+  (:use #:cl #:derp)
+  (:export add-derp remove-derp start-derp stop-derp))
