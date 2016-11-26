@@ -2,11 +2,12 @@
   :description "derp"
   :author "dptd <dptdescribe@gmail.com>"
   :license "MIT"
-  :depends-on (#:jasa #:cl-json #:cl-ppcre #:cxml)
+  :depends-on (#:jasa #:cl-json #:cl-ppcre #:cxml #:cl-async #:bordeaux-threads)
   :serial t
   :components ((:file "package")
                (:file "derp")
                (:file "commands")
                (:file "queues")
-               (:file "requests")))
+               (:file "requests")
+               (:file "derponarium")))
 
