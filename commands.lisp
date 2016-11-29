@@ -21,8 +21,13 @@
                           :icon_emoji (slot-value bot 'derp::icon)))
 
 (defmethod fetch-users ((bot derp::derp))
-  (jasa.channels:info :token (slot-value bot 'derp::token)
-                      :channel (slot-value bot 'derp::channel)))
+  (cond ((char= #\C (char (slot-value bot 'derp::channel) 0))
+         (jasa.channels:info :token (slot-value bot 'derp::token)
+                           :channel (slot-value bot 'derp::channel)))
+        ((char= #\G (char (slot-value bot 'derp::channel) 0))
+         (jasa.groups:info :token (slot-value bot 'derp::token)
+                           :channel (slot-value bot 'derp::channel)))
+        (t (error "Derp channel field is invalid. Should be starting with C or G character."))))
 
 (defmethod get-users ((bot derp::derp))
   (cdr (delete (slot-value bot 'derp::id) (assoc :members (cdadr (fetch-users bot))) :test #'string=)))
