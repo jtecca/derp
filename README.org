@@ -34,13 +34,56 @@ Check on your channel if derp is alive by writing: =@derp ping= Derp should resp
 
 * Supported commands
 
-| command | description                                      |
-|---------+--------------------------------------------------|
-| cat     | displays random cat gif                          |
-| dog     | displays random dog gif                          |
-| +help   | displays available commands and the description+ |
-| joke    | displays random Chuck Norris joke                |
-| random  | picks one random person from the channel         |
-| ping    | displays "pong" when alive                       |
-| remove  | removes last derp's message                      |
-| review  | picks two random people from the channel         |
+| command    | description                                      |
+|------------+--------------------------------------------------|
+| cat        | displays random cat gif                          |
+| dog        | displays random dog gif                          |
+| joke       | displays random Chuck Norris joke                |
+| yes?       | displays random yes, no or maybe gif             |
+|            |                                                  |
+| randuser   | picks random person from the channel             |
+| randnumber | picks random number from 0 to given number       |
+| review     | picks two random people from the channel         |
+|            |                                                  |
+| +help      | displays available commands and the description+ |
+| ping       | displays "pong" when alive                       |
+| remove     | removes last derp's message                      |
+
+** Queues
+
+In one of our projects we had to deliver some binary files. We couldn't merge them so it was important to deliver one change at a time. This is why *queues* feature was made. User can =lock= and =unlock= specific queue. When one user is done and unlocks the queue then the next person in line gets notified that it is his / her turn.
+
+| command       | description                    |
+|---------------+--------------------------------|
+| add           | add new queue                  |
+| +remove-queue | remove queue+                  |
+| rename        | rename queue                   |
+| queues        | list all queues                |
+|               |                                |
+| lock          | add yourself to the queue      |
+| unlock        | remove yourself from the queue |
+| status        | display status of all queues   |
+| kick          | kick someone from the queue    |
+
+#+BEGIN_SRC
+@derp queues
+@derp add foo
+@derp queues
+@derp lock foo
+@derp status
+#+END_SRC
+
+** Requests
+
+Requests feature was created to enable tracking of people requests. Any user can add his / her own request for new derp command.
+
+| command  | description              |
+|----------+--------------------------|
+| request  | add new request          |
+| requests | display current requests |
+
+#+BEGIN_SRC
+@derp requests
+@derp request quote return random quote
+@derp requests
+#+END_SRC
