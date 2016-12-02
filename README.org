@@ -22,7 +22,7 @@ Example below shows how to spawn a new derp.
                               :token "YourSlackAPIToken"
                               :id "C01234567"
                               :channel "C01234567"
-                              :commands '("cat" "ping" "help"))))
+                              :commands '("cat" "ping"))))
 #+END_SRC
 
 And here is how you can make your bot start derping...
@@ -50,7 +50,6 @@ Check on your channel if derp is alive by writing: =@derp ping= Derp should resp
 | remove     | removes last derp's message                      |
 
 ** Queues
-
 In one of our projects we had to deliver some binary files. We couldn't merge them so it was important to deliver one change at a time. This is why *queues* feature was made. User can =lock= and =unlock= specific queue. When one user is done and unlocks the queue then the next person in line gets notified that it is his / her turn.
 
 | command       | description                    |
@@ -74,7 +73,6 @@ In one of our projects we had to deliver some binary files. We couldn't merge th
 #+END_SRC
 
 ** Requests
-
 Requests feature was created to enable tracking of people requests. Any user can add his / her own request for new derp command.
 
 | command  | description              |
@@ -86,4 +84,33 @@ Requests feature was created to enable tracking of people requests. Any user can
 @derp requests
 @derp request quote return random quote
 @derp requests
+#+END_SRC
+
+* Derponarium
+Derponarium is a package which allows to spawn multiple derps (using single Slack API token) on multiple channels. Every derp is running in a separate thread. Derponarium allows to create different derps on different channels. For example you can spawn one derp with support only for commands connected with queues on specific channel and another derp with =cat=, =dog=, =joke= and other funny features on different channel.
+
+#+BEGIN_SRC lisp
+(setf derp-queues
+      (derp:spawn-derp
+       (derp:make-derp-config :name "derp"
+                              :icon ":robot_face:"
+                              :token "YourSlackAPIToken"
+                              :id "C01234567"
+                              :channel "C01234567"
+                              :commands '("lock" "unlock" "status" "queues"))))
+
+(setf derp-funny
+      (derp:spawn-derp
+       (derp:make-derp-config :name "derp"
+                              :icon ":robot_face:"
+                              :token "YourSlackAPIToken"
+                              :id "C01234567"
+                              :channel "C89012345"
+                              :commands '("cat" "dog" "joke" "features"))))
+
+(derponarium:add-derp derp-queues)
+(derponarium:add-derp derp-funny)
+derponarium:*derps*
+(derponarium:start-derp (prehash derp-queues))
+(derponarium:start-derp (prehash derp-funny))
 #+END_SRC
