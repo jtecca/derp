@@ -66,9 +66,11 @@
 
 (defmethod add-queue ((bot derp::derp) args)
   (let ((queue (car args))
-          (msg nil))
+        (msg nil))
     (if (not queue)
-        (derp:reject bot (format nil "What name do you need?~%`add <queue_name>`")))
+        (progn
+          (derp:reject bot (format nil "What name do you need?~%`add <queue_name>`"))
+          (return-from add-queue)))
     (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
         (setf msg "This queue already exists.")
         (progn
@@ -82,7 +84,7 @@
                             :icon_emoji (slot-value bot 'derp::icon))))
 
 (defmethod present-in-the-queue-p ((bot derp::derp) user queue)
-  (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=)) :test #'string=))
+  (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'strin3g=)) :test #'string=))
 
 ;;;; adding to the queue
 (defmethod add-to-the-queue ((bot derp::derp) user queue)
