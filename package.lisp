@@ -17,3 +17,7 @@
 (defpackage #:derponarium
   (:use #:cl #:derp)
   (:export add-derp remove-derp start-derp stop-derp))
+
+(defpackage #:derp.reminders
+  (:use #:cl #:derp)
+  (:export remind reminders))

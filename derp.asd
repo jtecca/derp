@@ -9,5 +9,6 @@
                (:file "commands")
                (:file "queues")
                (:file "requests")
-               (:file "derponarium")))
+               (:file "derponarium")
+               (:file "reminders")))
 
