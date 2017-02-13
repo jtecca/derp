@@ -100,11 +100,11 @@
 (defmethod fetch-history ((bot derp))
   (with-slots (channel token ts) bot
     (cond ((char= #\C (char channel 0))
-           (ignore-errors (jasa.channels:history :token token
+           (ignore-errors (jasaw.channels:history :token token
                                                  :channel channel
                                                  :oldest ts)))
           ((char= #\G (char channel 0))
-           (ignore-errors (jasa.groups:history :token token
+           (ignore-errors (jasaw.groups:history :token token
                                                :channel channel
                                                :oldest ts)))
           (t (error "Derp channel field is invalid. Should be starting with C or G character.")))))
@@ -116,9 +116,9 @@
       (setf tasks nil)))
 
 (defmethod reject ((bot derp) reason)
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+  (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
-                          :attachments (jasa.chat:prepare-attachments :text reason
+                          :attachments (jasaw.chat:prepare-attachments :text reason
                                                                       :mrkdwn_in '("text")
                                                                       :color "danger")
                           :username (slot-value bot 'derp::name)
@@ -172,7 +172,7 @@
   (with-slots (token users) bot
     (let ((name (assoc id users :test #'string=)))
       (if name (cdr name)
-            (let ((new-name (jasa.utils:get-user-name-from-id :token token :user-id id)))
+            (let ((new-name (jasaw.utils:get-user-name-from-id :token token :user-id id)))
               (if new-name
                   (progn
                     (push (cons id new-name) users)

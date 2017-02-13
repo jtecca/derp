@@ -19,9 +19,9 @@
 
 (defmethod requests ((bot derp::derp))
   (let ((number-of-requests (length (slot-value bot 'derp::requests))))
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+  (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
-                          :attachments (jasa.chat:prepare-attachments :title (format nil "Requested commands (~A):" number-of-requests)
+                          :attachments (jasaw.chat:prepare-attachments :title (format nil "Requested commands (~A):" number-of-requests)
                                                                       :text (if (< 0 number-of-requests)
                                                                                 (get-requests (slot-value bot 'derp::requests))
                                                                                 "Currently there are no requests.")
@@ -38,7 +38,7 @@
       (progn
         (push (list (car args) (extract-description (cdr args)) user) (slot-value bot 'derp::requests))
         (save-requests bot)
-        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+        (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
                                 :text "Stored, thanks!"
                                 :username (slot-value bot 'derp::name)

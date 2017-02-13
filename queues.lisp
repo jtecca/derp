@@ -18,10 +18,10 @@
       (concatenate 'string (format nil "∙ *~A*~%" (caar queues)) (available-queues (cdr queues)))))
 
 (defmethod queues ((bot derp::derp))
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+  (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                           :channel (slot-value bot 'derp::channel)
                           :text "Available queues:"
-                          :attachments (jasa.chat:prepare-attachments :fallback ""
+                          :attachments (jasaw.chat:prepare-attachments :fallback ""
                                                                       :text (available-queues (slot-value bot 'derp::queues))
                                                                       :mrkdwn_in '("text")
                                                                       :color "good")
@@ -43,7 +43,7 @@
 
 (defmethod status ((bot derp::derp) queue)
   (if (queue-exists-p bot queue)
-      (jasa.chat:post-message :token (slot-value bot 'derp::token)
+      (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                               :channel (slot-value bot 'derp::channel)
                               :text (queue-status bot queue)
                               :username (slot-value bot 'derp::name)
@@ -54,10 +54,10 @@
       (concatenate 'string (format nil "~A~%" (queue-status bot (caar queues))) (queues-status bot (cdr queues)))))
 
 (defmethod status-all ((bot derp::derp))
-  (jasa.chat:post-message :token (slot-value bot 'derp::token)
+  (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                               :channel (slot-value bot 'derp::channel)
                               :text "Status of all queues:"
-                              :attachments (jasa.chat:prepare-attachments
+                              :attachments (jasaw.chat:prepare-attachments
                                             :text (queues-status bot (slot-value bot 'derp::queues))
                                             :mrkdwn_in '("text")
                                             :color "good")
@@ -77,7 +77,7 @@
           (push (list queue) (slot-value bot 'derp::queues))
           (save-queues bot)
           (setf msg (format nil "Queue *~A* added." queue))))
-    (jasa.chat:post-message :token (slot-value bot 'derp::token)
+    (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                             :channel (slot-value bot 'derp::channel)
                             :text msg
                             :username (slot-value bot 'derp::name)
@@ -105,7 +105,7 @@
     (if (not queue)
         (derp:reject bot (format nil "Which queue you want to lock?~%`lock <queue_name>`")))
     (if (add-if-possible bot user queue)
-        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+        (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
                                 :text (queue-status bot queue)
                                 :username (slot-value bot 'derp::name)
@@ -140,7 +140,7 @@
     (if (and user queue)
         (if (remove-if-possible bot user queue)
             (progn
-              (jasa.chat:post-message :token (slot-value bot 'derp::token)
+              (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                                       :channel (slot-value bot 'derp::channel)
                                       :text (queue-status bot queue)
                                       :username (slot-value bot 'derp::name)
@@ -152,7 +152,7 @@
 (defmethod ping-next-user ((bot derp::derp) q)
   (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
     (if (not (= 0 (length queue)))
-        (jasa.chat:post-message :token (slot-value bot 'derp::token)
+        (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                                 :channel (slot-value bot 'derp::channel)
                                 :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *~A*" q))
                                 :username (slot-value bot 'derp::name)
@@ -167,7 +167,7 @@
             (progn
               (setf (car (assoc old (slot-value bot 'derp::queues) :test #'string=)) new)
               (save-queues bot)
-              (jasa.chat:post-message :token (slot-value bot 'derp::token)
+              (jasaw.chat:post-message :token (slot-value bot 'derp::token)
                                       :channel (slot-value bot 'derp::channel)
                                       :text (format nil "Queue *~A* was renamed to *~A*." old new)
                                       :username (slot-value bot 'derp::name)

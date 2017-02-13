@@ -2,9 +2,9 @@
 #+AUTHOR: dptd
 
 * Installation
-Derp uses [[https://github.com/dptd/jasa][JASA]] to communicate with the Slack API.
+Derp uses [[https://github.com/dptd/jasa][JASAW]] to communicate with the Slack API.
 
-=git clone https://github.com/dptd/jasa=
+=git clone https://github.com/dptd/jasaw=
 
 =git clone https://github.com/dptd/derp=
 
@@ -40,11 +40,11 @@ Check on your channel if derp is alive by writing: =@derp ping= Derp should resp
 | dog        | displays random dog gif                          |
 | joke       | displays random Chuck Norris joke                |
 | yes?       | displays random yes, no or maybe gif             |
-|            |                                                  |
+|------------+--------------------------------------------------|
 | randuser   | picks random person from the channel             |
 | randnumber | picks random number from 0 to given number       |
 | review     | picks two random people from the channel         |
-|            |                                                  |
+|------------+--------------------------------------------------|
 | +help      | displays available commands and the description+ |
 | ping       | displays "pong" when alive                       |
 | remove     | removes last derp's message                      |
@@ -58,7 +58,7 @@ In one of our projects we had to deliver some binary files. We couldn't merge th
 | +remove-queue | remove queue+                  |
 | rename        | rename queue                   |
 | queues        | list all queues                |
-|               |                                |
+|---------------+--------------------------------|
 | lock          | add yourself to the queue      |
 | unlock        | remove yourself from the queue |
 | status        | display status of all queues   |

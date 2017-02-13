@@ -2,7 +2,7 @@
   :description "derp"
   :author "dptd <dptdescribe@gmail.com>"
   :license "MIT"
-  :depends-on (#:jasa #:cl-json #:cl-ppcre #:cxml #:cl-async #:bordeaux-threads)
+  :depends-on (#:jasaw #:cl-json #:cl-ppcre #:cxml #:cl-async #:bordeaux-threads)
   :serial t
   :components ((:file "package")
                (:file "derp")
