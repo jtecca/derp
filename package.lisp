@@ -1,5 +1,5 @@
 (defpackage #:derp
-  (:use #:cl #:cl-json #:cl-ppcre)
+  (:use #:cl #:jasb #:cl-json #:cl-ppcre)
   (:export direct-message make-derp-config reject spawn-derp start-derping))
 
 (defpackage #:derp.cmds
