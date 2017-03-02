@@ -32,7 +32,7 @@
   (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
       t
       (progn
-        (derp:reject bot (format nil "Queue *~A* doesn't exist. Use `queues` command to see all available queues." queue))
+        (jasb:reject bot (format nil "Queue *~A* doesn't exist. Use `queues` command to see all available queues." queue))
         nil)))
 
 (defmethod queue-status ((bot derp::derp) q)
@@ -69,7 +69,7 @@
         (msg nil))
     (if (not queue)
         (progn
-          (derp:reject bot (format nil "What name do you need?~%`add <queue_name>`"))
+          (jasb:reject bot (format nil "What name do you need?~%`add <queue_name>`"))
           (return-from add-queue)))
     (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
         (setf msg "This queue already exists.")
@@ -97,13 +97,13 @@
             (add-to-the-queue bot user queue)
             (save-queues bot))
           (progn
-            (derp:reject bot "I'm afraid you are already in this queue.")
+            (jasb:reject bot "I'm afraid you are already in this queue.")
             nil))))
 
 (defmethod lock ((bot derp::derp) user args)
   (let ((queue (car args)))
     (if (not queue)
-        (derp:reject bot (format nil "Which queue you want to lock?~%`lock <queue_name>`")))
+        (jasb:reject bot (format nil "Which queue you want to lock?~%`lock <queue_name>`")))
     (if (add-if-possible bot user queue)
         (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
                                 :channel (slot-value bot 'jasb::channel)
@@ -128,7 +128,7 @@
   (if (queue-exists-p bot queue)
       (if (not (present-in-the-queue-p bot user queue))
           (progn
-            (derp:reject bot "I'm afraid you are not even in this queue.")
+            (jasb:reject bot "I'm afraid you are not even in this queue.")
             nil)
           (progn
             (remove-from-the-queue bot user queue)
@@ -147,7 +147,7 @@
                                       :icon_emoji (slot-value bot 'jasb::icon))
               (if head
                   (ping-next-user bot queue))))
-        (derp:reject bot (format nil "Which queue you want to unlock?~%`unlock <queue_name>`")))))
+        (jasb:reject bot (format nil "Which queue you want to unlock?~%`unlock <queue_name>`")))))
 
 (defmethod ping-next-user ((bot derp::derp) q)
   (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
@@ -172,17 +172,17 @@
                                       :text (format nil "Queue *~A* was renamed to *~A*." old new)
                                       :username (slot-value bot 'jasb::name)
                                       :icon_emoji (slot-value bot 'jasb::icon)))))
-      (derp:reject bot (format nil "I need two arguments.~%`rename <old_name> <new_name>`"))))
+      (jasb:reject bot (format nil "I need two arguments.~%`rename <old_name> <new_name>`"))))
 
 (defmethod rename-possible-p ((bot derp::derp) old new)
   (if (assoc old (slot-value bot 'derp::queues) :test #'string=)
       (if (not (assoc new (slot-value bot 'derp::queues) :test #'string=))
           t
           (progn
-            (derp:reject bot (format nil "Queue *~A* already exists.~%`rename <old_name> <new_name>`" new))
+            (jasb:reject bot (format nil "Queue *~A* already exists.~%`rename <old_name> <new_name>`" new))
             nil))
       (progn
-        (derp:reject bot (format nil "Queue *~A* doesn't exists.~%`rename <old_name> <new_name>`" old))
+        (jasb:reject bot (format nil "Queue *~A* doesn't exists.~%`rename <old_name> <new_name>`" old))
         nil)))
 
 (defmethod kick ((bot derp::derp) args)
@@ -192,6 +192,6 @@
         (if queue
             (if (present-in-the-queue-p bot user queue)
                   (unlock bot user (list queue))
-                (derp:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
-            (derp:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))
-        (derp:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`")))))
+                (jasb:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
+            (jasb:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))
+        (jasb:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`")))))

@@ -161,7 +161,7 @@
   "Returns random number."
   (let ((max (car args)))
     (if (not max)
-        (derp:reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))
+        (jasb:reject bot (format nil "What is the maximum number? `randnumber <max_number>`")))
     (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
                              :channel (slot-value bot 'jasb::channel)
                              :text (format nil ":game_die: ~A :game_die:" (random (parse-integer max)))

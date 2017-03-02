@@ -43,4 +43,4 @@
                                 :text "Stored, thanks!"
                                 :username (slot-value bot 'jasb::name)
                                 :icon_emoji (slot-value bot 'jasb::icon)))
-  (derp:reject bot (format nil "I need two arguments.~%`request <command_name> <command_description>`"))))
+  (jasb:reject bot (format nil "I need two arguments.~%`request <command_name> <command_description>`"))))

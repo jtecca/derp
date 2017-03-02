@@ -66,15 +66,6 @@
                      :requests (derp-config-requests config))
       (error "spawn-derp requires derp-config as parameter")))
 
-(defmethod reject ((bot derp) reason)
-  (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                           :channel (slot-value bot 'jasb::channel)
-                           :attachments (jasaw.chat:prepare-attachments :text reason
-                                                                        :mrkdwn_in '("text")
-                                                                        :color "danger")
-                           :username (slot-value bot 'jasb::name)
-                           :icon_emoji (slot-value bot 'jasb::icon)))
-
 (defmethod run-tasks ((bot derp))
   "Running all tasks from the queue."
   (mapcar #'(lambda (x) (run-task bot x)) (slot-value bot 'jasb::tasks))
@@ -107,7 +98,7 @@
             ((string= cmd "unlock") (derp.queues:unlock bot user args))
             ((string= cmd "yes?") (derp.cmds:yesno bot))
             ((string= cmd "queues") (derp.queues:queues bot)))
-          (reject bot (format nil "I do not know this command."))))))
+          (jasb:reject bot (format nil "I do not know this command."))))))
 
 (defmethod start-derping ((bot derp))
   (loop

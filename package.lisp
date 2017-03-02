@@ -1,6 +1,6 @@
 (defpackage #:derp
   (:use #:cl #:jasb #:cl-json #:cl-ppcre)
-  (:export direct-message make-derp-config reject spawn-derp start-derping))
+  (:export direct-message make-derp-config spawn-derp start-derping))
 
 (defpackage #:derp.cmds
   (:use #:cl #:jasaw.chat #:cxml)
