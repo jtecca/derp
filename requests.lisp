@@ -1,14 +1,14 @@
 (in-package #:derp.requests)
 
 (defmethod save-requests ((bot derp::derp))
-  (with-open-file (out (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+  (with-open-file (out (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'jasb::name) (slot-value bot 'jasb::channel))
                        :direction :output
                        :if-exists :supersede)
     (with-standard-io-syntax
       (print (slot-value bot 'derp::requests) out))))
 
 (defmethod load-requests ((bot derp::derp))
-  (with-open-file (in (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'derp::name) (slot-value bot 'derp::channel))
+  (with-open-file (in (format nil "~~/tmp/~A-~A-requests.db" (slot-value bot 'jasb::name) (slot-value bot 'jasb::channel))
                       :external-format :utf-8)
     (with-standard-io-syntax
       (setf (slot-value bot 'derp::requests) (read in)))))
@@ -19,15 +19,15 @@
 
 (defmethod requests ((bot derp::derp))
   (let ((number-of-requests (length (slot-value bot 'derp::requests))))
-  (jasaw.chat:post-message :token (slot-value bot 'derp::token)
-                          :channel (slot-value bot 'derp::channel)
+  (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
+                          :channel (slot-value bot 'jasb::channel)
                           :attachments (jasaw.chat:prepare-attachments :title (format nil "Requested commands (~A):" number-of-requests)
                                                                       :text (if (< 0 number-of-requests)
                                                                                 (get-requests (slot-value bot 'derp::requests))
                                                                                 "Currently there are no requests.")
                                                                       :mrkdwn_in '("text"))
-                          :username (slot-value bot 'derp::name)
-                          :icon_emoji (slot-value bot 'derp::icon))))
+                          :username (slot-value bot 'jasb::name)
+                          :icon_emoji (slot-value bot 'jasb::icon))))
 
 (defun extract-description (args)
   (if args
@@ -38,9 +38,9 @@
       (progn
         (push (list (car args) (extract-description (cdr args)) user) (slot-value bot 'derp::requests))
         (save-requests bot)
-        (jasaw.chat:post-message :token (slot-value bot 'derp::token)
-                                :channel (slot-value bot 'derp::channel)
+        (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
+                                :channel (slot-value bot 'jasb::channel)
                                 :text "Stored, thanks!"
-                                :username (slot-value bot 'derp::name)
-                                :icon_emoji (slot-value bot 'derp::icon)))
+                                :username (slot-value bot 'jasb::name)
+                                :icon_emoji (slot-value bot 'jasb::icon)))
   (derp:reject bot (format nil "I need two arguments.~%`request <command_name> <command_description>`"))))

@@ -12,8 +12,8 @@
 (defun prehash (derp)
   "Returns string based on derp name and channel."
   (concatenate 'string
-               (slot-value derp 'derp::name)
-               (slot-value derp 'derp::channel)))
+               (slot-value derp 'jasb::name)
+               (slot-value derp 'jasb::channel)))
 
 (defun add-derp (derp)
   (if (typep derp 'derp::derp)
