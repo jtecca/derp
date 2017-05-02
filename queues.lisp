@@ -186,12 +186,18 @@
         nil)))
 
 (defmethod kick ((bot derp::derp) args)
-  (let ((user (car args))
-        (queue (cadr args)))
-    (if user
-        (if queue
-            (if (present-in-the-queue-p bot user queue)
-                (unlock bot user (list queue))
-                (jasb:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
-            (jasb:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))
-        (jasb:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`")))))
+  (if (> 3 (length args))
+      (jasb:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`"))
+      (let ((user (car args))
+            (queue (cadr args)))
+        (if user
+            (if queue
+                (if (present-in-the-queue-p bot user queue)
+                    (progn
+                      (unlock bot user (list queue))
+                      (jasaw.reactions::add-reaction :token (slot-value bot 'jasb::token)
+                                                     :channel (slot-value bot 'jasb::channel)
+                                                     :name "lel"
+                                                     :timestamp (car (last args))))
+                    (jasb:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
+                (jasb:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))))))
