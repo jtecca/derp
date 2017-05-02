@@ -19,14 +19,14 @@
 
 (defmethod queues ((bot derp::derp))
   (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                          :channel (slot-value bot 'jasb::channel)
-                          :text "Available queues:"
-                          :attachments (jasaw.chat:prepare-attachments :fallback ""
-                                                                      :text (available-queues (slot-value bot 'derp::queues))
-                                                                      :mrkdwn_in '("text")
-                                                                      :color "good")
-                          :username (slot-value bot 'jasb::name)
-                          :icon_emoji (slot-value bot 'jasb::icon)))
+                           :channel (slot-value bot 'jasb::channel)
+                           :text "Available queues:"
+                           :attachments (jasaw.chat:prepare-attachments :fallback ""
+                                                                        :text (available-queues (slot-value bot 'derp::queues))
+                                                                        :mrkdwn_in '("text")
+                                                                        :color "good")
+                           :username (slot-value bot 'jasb::name)
+                           :icon_emoji (slot-value bot 'jasb::icon)))
 
 (defmethod queue-exists-p ((bot derp::derp) queue)
   (if (assoc queue (slot-value bot 'derp::queues) :test #'string=)
@@ -37,17 +37,17 @@
 
 (defmethod queue-status ((bot derp::derp) q)
   (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
-  (cond ((= 0 (length queue)) (format nil "*[~A]* Queue is empty!" q))
-        ((< 1 (length queue)) (format nil "*[~A]* TAIL → ~{*~A* → ~}HEAD" q queue))
-        ((format nil "*[~A]* TAIL → *~A* -> HEAD" q (car queue))))))
+    (cond ((= 0 (length queue)) (format nil "*[~A]* Queue is empty!" q))
+          ((< 1 (length queue)) (format nil "*[~A]* TAIL → ~{*~A* → ~}HEAD" q queue))
+          ((format nil "*[~A]* TAIL → *~A* -> HEAD" q (car queue))))))
 
 (defmethod status ((bot derp::derp) queue)
   (if (queue-exists-p bot queue)
       (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                              :channel (slot-value bot 'jasb::channel)
-                              :text (queue-status bot queue)
-                              :username (slot-value bot 'jasb::name)
-                              :icon_emoji (slot-value bot 'jasb::icon))))
+                               :channel (slot-value bot 'jasb::channel)
+                               :text (queue-status bot queue)
+                               :username (slot-value bot 'jasb::name)
+                               :icon_emoji (slot-value bot 'jasb::icon))))
 
 (defmethod queues-status ((bot derp::derp) queues)
   (if queues
@@ -55,14 +55,14 @@
 
 (defmethod status-all ((bot derp::derp))
   (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                              :channel (slot-value bot 'jasb::channel)
-                              :text "Status of all queues:"
-                              :attachments (jasaw.chat:prepare-attachments
-                                            :text (queues-status bot (slot-value bot 'derp::queues))
-                                            :mrkdwn_in '("text")
-                                            :color "good")
-                              :username (slot-value bot 'jasb::name)
-                              :icon_emoji (slot-value bot 'jasb::icon)))
+                           :channel (slot-value bot 'jasb::channel)
+                           :text "Status of all queues:"
+                           :attachments (jasaw.chat:prepare-attachments
+                                         :text (queues-status bot (slot-value bot 'derp::queues))
+                                         :mrkdwn_in '("text")
+                                         :color "good")
+                           :username (slot-value bot 'jasb::name)
+                           :icon_emoji (slot-value bot 'jasb::icon)))
 
 (defmethod add-queue ((bot derp::derp) args)
   (let ((queue (car args))
@@ -78,13 +78,13 @@
           (save-queues bot)
           (setf msg (format nil "Queue *~A* added." queue))))
     (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                            :channel (slot-value bot 'jasb::channel)
-                            :text msg
-                            :username (slot-value bot 'jasb::name)
-                            :icon_emoji (slot-value bot 'jasb::icon))))
+                             :channel (slot-value bot 'jasb::channel)
+                             :text msg
+                             :username (slot-value bot 'jasb::name)
+                             :icon_emoji (slot-value bot 'jasb::icon))))
 
 (defmethod present-in-the-queue-p ((bot derp::derp) user queue)
-  (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'strin3g=)) :test #'string=))
+  (member user (cdr (assoc queue (slot-value bot 'derp::queues) :test #'string=)) :test #'string=))
 
 ;;;; adding to the queue
 (defmethod add-to-the-queue ((bot derp::derp) user queue)
@@ -106,10 +106,10 @@
         (jasb:reject bot (format nil "Which queue you want to lock?~%`lock <queue_name>`")))
     (if (add-if-possible bot user queue)
         (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                                :channel (slot-value bot 'jasb::channel)
-                                :text (queue-status bot queue)
-                                :username (slot-value bot 'jasb::name)
-                                :icon_emoji (slot-value bot 'jasb::icon)))))
+                                 :channel (slot-value bot 'jasb::channel)
+                                 :text (queue-status bot queue)
+                                 :username (slot-value bot 'jasb::name)
+                                 :icon_emoji (slot-value bot 'jasb::icon)))))
 
 
 ;;;; removing from the queue
@@ -141,10 +141,10 @@
         (if (remove-if-possible bot user queue)
             (progn
               (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                                      :channel (slot-value bot 'jasb::channel)
-                                      :text (queue-status bot queue)
-                                      :username (slot-value bot 'jasb::name)
-                                      :icon_emoji (slot-value bot 'jasb::icon))
+                                       :channel (slot-value bot 'jasb::channel)
+                                       :text (queue-status bot queue)
+                                       :username (slot-value bot 'jasb::name)
+                                       :icon_emoji (slot-value bot 'jasb::icon))
               (if head
                   (ping-next-user bot queue))))
         (jasb:reject bot (format nil "Which queue you want to unlock?~%`unlock <queue_name>`")))))
@@ -153,10 +153,10 @@
   (let ((queue (cdr (assoc q (slot-value bot 'derp::queues) :test #'string=))))
     (if (not (= 0 (length queue)))
         (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                                :channel (slot-value bot 'jasb::channel)
-                                :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *~A*" q))
-                                :username (slot-value bot 'jasb::name)
-                                :icon_emoji (slot-value bot 'jasb::icon)))))
+                                 :channel (slot-value bot 'jasb::channel)
+                                 :text (derp:direct-message (car (last queue)) (format nil "it's your turn in the queue *~A*" q))
+                                 :username (slot-value bot 'jasb::name)
+                                 :icon_emoji (slot-value bot 'jasb::icon)))))
 
 (defmethod rename ((bot derp::derp) args)
   "Renames queue. Takes current name and new name."
@@ -168,10 +168,10 @@
               (setf (car (assoc old (slot-value bot 'derp::queues) :test #'string=)) new)
               (save-queues bot)
               (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
-                                      :channel (slot-value bot 'jasb::channel)
-                                      :text (format nil "Queue *~A* was renamed to *~A*." old new)
-                                      :username (slot-value bot 'jasb::name)
-                                      :icon_emoji (slot-value bot 'jasb::icon)))))
+                                       :channel (slot-value bot 'jasb::channel)
+                                       :text (format nil "Queue *~A* was renamed to *~A*." old new)
+                                       :username (slot-value bot 'jasb::name)
+                                       :icon_emoji (slot-value bot 'jasb::icon)))))
       (jasb:reject bot (format nil "I need two arguments.~%`rename <old_name> <new_name>`"))))
 
 (defmethod rename-possible-p ((bot derp::derp) old new)
@@ -191,7 +191,7 @@
     (if user
         (if queue
             (if (present-in-the-queue-p bot user queue)
-                  (unlock bot user (list queue))
+                (unlock bot user (list queue))
                 (jasb:reject bot (format nil "Are you sure that *~A* is in the *~A* queue?" user queue)))
             (jasb:reject bot (format nil "From which queue you want to kick *~A*?~%`kick <user_name> <queue_name>`" user)))
         (jasb:reject bot (format nil "Who you want to kick and from which queue?~%`kick <user_name> <queue_name>`")))))
