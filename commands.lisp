@@ -182,3 +182,14 @@
                                                                         :color "good")
                            :username (slot-value bot 'jasb::name)
                            :icon_emoji (slot-value bot 'jasb::icon)))
+;;;; dawid
+(defmethod dawid ((bot derp::derp) args)
+  (jasaw.chat:post-message :token (slot-value bot 'jasb::token)
+                           :channel (slot-value bot 'jasb::channel)
+                           :text (format nil "4.10.2016, 9:24AM \`@derp rand -1\` #neverforget")
+                           :username (slot-value bot 'jasb::name)
+                           :icon_emoji (slot-value bot 'jasb::icon))
+  (jasaw.reactions::add-reaction :token (slot-value bot 'jasb::token)
+                                 :channel (slot-value bot 'jasb::channel)
+                                 :name "cs"
+                                 :timestamp (car (last args))))
