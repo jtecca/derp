@@ -35,7 +35,7 @@
 (defmethod random-user ((bot derp::derp))
   (let* ((users (get-users bot))
          (winner (random (length users))))
-    (derp::get-name bot (nth winner users))))
+    (jasb::get-name bot (nth winner users))))
 
 ;;;; randuser
 (defmethod rand-user ((bot derp::derp))
