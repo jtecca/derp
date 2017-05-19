@@ -102,6 +102,9 @@
             ((string= cmd "queues") (derp.queues:queues bot)))
           (jasb:reject bot (format nil "I do not know this command."))))))
 
+(defun direct-message (username text)
+  (format nil "<@~A> ~A" username text))
+
 (defmethod start-derping ((bot derp))
   (loop
     (progn
