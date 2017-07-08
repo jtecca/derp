@@ -15,54 +15,54 @@ To create new derp use =(derp:spawn-derp)= function. This functions takes only o
 
 Example below shows how to spawn a new derp.
 #+BEGIN_SRC lisp
-(setf derp
-      (derp:spawn-derp
-       (derp:make-derp-config :name "derp"
-                              :icon ":robot_face:"
-                              :token "YourSlackAPIToken"
-                              :id "C01234567"
-                              :channel "C01234567"
-                              :commands '("cat" "ping"))))
+  (setf derp
+        (derp:spawn-derp
+         (derp:make-derp-config :name "derp"
+                                :icon ":robot_face:"
+                                :token "YourSlackAPIToken"
+                                :id "C01234567"
+                                :channel "C01234567"
+                                :commands '("cat" "ping"))))
 #+END_SRC
 
 And here is how you can make your bot start derping...
 #+BEGIN_SRC lisp
-(derp:start-derping derp)
+  (derp:start-derping derp)
 #+END_SRC
 
 Check on your channel if derp is alive by writing: =@derp ping= Derp should response with =pong=.
 
 * Supported commands
 
-| command    | description                                      |
-|------------+--------------------------------------------------|
-| cat        | displays random cat gif                          |
-| dog        | displays random dog gif                          |
-| joke       | displays random Chuck Norris joke                |
-| yes?       | displays random yes, no or maybe gif             |
-|------------+--------------------------------------------------|
-| randuser   | picks random person from the channel             |
-| randnumber | picks random number from 0 to given number       |
-| review     | picks two random people from the channel         |
-|------------+--------------------------------------------------|
-| +help      | displays available commands and the description+ |
-| ping       | displays "pong" when alive                       |
-| remove     | removes last derp's message                      |
+| command    | description                                     |
+|------------+-------------------------------------------------|
+| cat        | displays random cat gif                         |
+| dog        | displays random dog gif                         |
+| joke       | displays random Chuck Norris joke               |
+| yes?       | displays random yes, no or maybe gif            |
+|------------+-------------------------------------------------|
+| randuser   | picks random person from the channel            |
+| randnumber | picks random number from 0 to given number      |
+| review     | picks two random people from the channel        |
+|------------+-------------------------------------------------|
+| +help       | displays available commands and the description+ |
+| ping       | displays "pong" when alive                      |
+| remove     | removes last derp's message                     |
 
 ** Queues
 In one of our projects we had to deliver some binary files. We couldn't merge them so it was important to deliver one change at a time. This is why *queues* feature was made. User can =lock= and =unlock= specific queue. When one user is done and unlocks the queue then the next person in line gets notified that it is his / her turn.
 
-| command       | description                    |
-|---------------+--------------------------------|
-| add           | add new queue                  |
-| +remove-queue | remove queue+                  |
-| rename        | rename queue                   |
-| queues        | list all queues                |
-|---------------+--------------------------------|
-| lock          | add yourself to the queue      |
-| unlock        | remove yourself from the queue |
-| status        | display status of all queues   |
-| kick          | kick someone from the queue    |
+| command      | description                    |
+|--------------+--------------------------------|
+| add          | add new queue                  |
+| +remove-queue | remove queue+                   |
+| rename       | rename queue                   |
+| queues       | list all queues                |
+|--------------+--------------------------------|
+| lock         | add yourself to the queue      |
+| unlock       | remove yourself from the queue |
+| status       | display status of all queues   |
+| kick         | kick someone from the queue    |
 
 #+BEGIN_SRC
 @derp queues
@@ -90,27 +90,27 @@ Requests feature was created to enable tracking of people requests. Any user can
 Derponarium is a package which allows to spawn multiple derps (using single Slack API token) on multiple channels. Every derp is running in a separate thread. Derponarium allows to create different derps on different channels. For example you can spawn one derp with support only for commands connected with queues on specific channel and another derp with =cat=, =dog=, =joke= and other funny features on different channel.
 
 #+BEGIN_SRC lisp
-(setf derp-queues
-      (derp:spawn-derp
-       (derp:make-derp-config :name "derp"
-                              :icon ":robot_face:"
-                              :token "YourSlackAPIToken"
-                              :id "C01234567"
-                              :channel "C01234567"
-                              :commands '("lock" "unlock" "status" "queues"))))
+  (setf derp-queues
+        (derp:spawn-derp
+         (derp:make-derp-config :name "derp"
+                                :icon ":robot_face:"
+                                :token "YourSlackAPIToken"
+                                :id "C01234567"
+                                :channel "C01234567"
+                                :commands '("lock" "unlock" "status" "queues"))))
 
-(setf derp-funny
-      (derp:spawn-derp
-       (derp:make-derp-config :name "derp"
-                              :icon ":robot_face:"
-                              :token "YourSlackAPIToken"
-                              :id "C01234567"
-                              :channel "C89012345"
-                              :commands '("cat" "dog" "joke" "features"))))
+  (setf derp-funny
+        (derp:spawn-derp
+         (derp:make-derp-config :name "derp"
+                                :icon ":robot_face:"
+                                :token "YourSlackAPIToken"
+                                :id "C01234567"
+                                :channel "C89012345"
+                                :commands '("cat" "dog" "joke" "features"))))
 
-(derponarium:add-derp derp-queues)
-(derponarium:add-derp derp-funny)
-derponarium:*derps*
-(derponarium:start-derp (prehash derp-queues))
-(derponarium:start-derp (prehash derp-funny))
+  (derponarium:add-derp derp-queues)
+  (derponarium:add-derp derp-funny)
+  derponarium:*derps*
+  (derponarium:start-derp (prehash derp-queues))
+  (derponarium:start-derp (prehash derp-funny))
 #+END_SRC
